@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hoger / Lager – Dobbelspel</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Stylesheet -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- Header Section -->
+    <header class="header">
+        <h1 class="header__title">Hoger / Lager – Dobbelspel</h1>
+        <p class="header__subtitle">Eerst rolt de computer, daarna zet jij in en gooi je zelf.</p>
+    </header>
+
+    <!-- Main Game Container -->
+    <main class="main-container">
+        <div class="game-grid">
+            
+            <!-- Left Column: Computer Panel -->
+            <section class="panel panel--computer">
+                <h2 class="panel__title">Computer</h2>
+                <div class="dice-container">
+                    <div class="dice-box" id="computer-die-1">–</div>
+                    <div class="dice-box" id="computer-die-2">–</div>
+                </div>
+                <p class="total-label">Totaal: <span class="mono" id="computer-total">0</span></p>
+                <button class="btn btn--primary" id="btn-computer">Computer gooien</button>
+            </section>
+
+            <!-- Center Column: Controls Panel -->
+            <section class="panel panel--controls">
+                <h2 class="panel__title">Inzet & Keuze</h2>
+                
+                <div class="saldo-display">
+                    <span class="saldo-label">Saldo:</span>
+                    <span class="saldo-value mono" id="saldo-waarde">100</span>
+                </div>
+
+                <div class="prediction-group">
+                    <label class="group-label">Kies hoger of lager:</label>
+                    <div class="radio-group">
+                        <label class="radio-option">
+                            <input type="radio" name="prediction" value="hoger" id="radio-hoger" checked>
+                            <span class="radio-custom"></span>
+                            <span class="radio-text">Hoger</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="prediction" value="lager" id="radio-lager">
+                            <span class="radio-custom"></span>
+                            <span class="radio-text">Lager</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="inzet-group">
+                    <label class="group-label" for="inzet">Inzet:</label>
+                    <input type="number" id="inzet" class="inzet-input mono" min="1" step="1" value="10">
+                    <p class="error-message" id="inzet-error"></p>
+                </div>
+
+                <div class="game-over-container" id="game-over-container">
+                    <p class="game-over-message" id="game-over-message"></p>
+                    <button class="btn btn--secondary" id="btn-nieuw-spel" style="display: none;">Nieuw spel</button>
+                </div>
+            </section>
+
+            <!-- Right Column: Player Panel -->
+            <section class="panel panel--player">
+                <h2 class="panel__title">Speler</h2>
+                <div class="dice-container">
+                    <div class="dice-box" id="player-die-1">–</div>
+                    <div class="dice-box" id="player-die-2">–</div>
+                </div>
+                <p class="total-label">Totaal: <span class="mono" id="player-total">0</span></p>
+                <button class="btn btn--primary" id="btn-speler" disabled>Speler gooien</button>
+            </section>
+        </div>
+
+        <!-- Bottom Section: Result & History -->
+        <section class="panel panel--result">
+            <div class="result-container" id="result-message"></div>
+            
+            <div class="history-section">
+                <div class="history-header">
+                    <h3 class="history-title">📊 Laatste rondes</h3>
+                    <span class="history-count" id="history-count">0 rondes</span>
+                </div>
+                <div class="history-table-wrapper">
+                    <table class="history-table" id="history-table">
+                        <thead>
+                            <tr>
+                                <th>Ronde</th>
+                                <th>Computer</th>
+                                <th>Speler</th>
+                                <th>Keuze</th>
+                                <th>Resultaat</th>
+                                <th>Saldo</th>
+                            </tr>
+                        </thead>
+                        <tbody id="history-body">
+                            <!-- History rows will be inserted here -->
+                        </tbody>
+                    </table>
+                </div>
+                <p class="history-empty" id="history-empty">Nog geen rondes gespeeld.</p>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>made with love by scayar</p>
+    </footer>
+
+    <!-- JavaScript Files -->
+    <script src="js/hogerlager.js"></script>
+    <script src="js/controller.js"></script>
+</body>
+</html>
+

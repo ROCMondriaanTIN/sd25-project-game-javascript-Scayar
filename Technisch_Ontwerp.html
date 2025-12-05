@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Technisch Ontwerp - Hoger / Lager – Dobbelspel</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f5f5f5;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            color: #2c3e50;
+            border-bottom: 4px solid #3498db;
+            padding-bottom: 10px;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+        }
+        
+        h2 {
+            color: #34495e;
+            margin-top: 40px;
+            margin-bottom: 20px;
+            padding: 10px;
+            background: #ecf0f1;
+            border-left: 5px solid #3498db;
+            font-size: 1.8em;
+        }
+        
+        h3 {
+            color: #2c3e50;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            font-size: 1.4em;
+        }
+        
+        hr {
+            border: none;
+            border-top: 2px solid #bdc3c7;
+            margin: 30px 0;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        th {
+            background: #3498db;
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+        }
+        
+        td {
+            padding: 10px 12px;
+            border-bottom: 1px solid #ecf0f1;
+        }
+        
+        tr:hover {
+            background: #f8f9fa;
+        }
+        
+        .code-block {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 20px;
+            border-radius: 5px;
+            margin: 20px 0;
+            font-family: 'Courier New', monospace;
+            overflow-x: auto;
+            font-size: 0.9em;
+            line-height: 1.8;
+        }
+        
+        .file-info {
+            background: #e8f4f8;
+            padding: 15px;
+            border-left: 4px solid #3498db;
+            margin: 20px 0;
+        }
+        
+        .file-info strong {
+            color: #2980b9;
+        }
+        
+        .uml-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 5px;
+            margin: 20px 0;
+            border: 1px solid #dee2e6;
+        }
+        
+        .uml-code {
+            font-family: 'Courier New', monospace;
+            color: #2c3e50;
+            white-space: pre;
+        }
+        
+        .note {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        
+        .note strong {
+            color: #856404;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧠 Technisch Ontwerp</h1>
+        <h2>Hoger / Lager – Dobbelspel</h2>
+        
+        <div class="file-info">
+            <strong>Project:</strong> Hoger / Lager – Dobbelspel<br>
+            <strong>Architectuur:</strong> MVC Pattern (Model-View-Controller)<br>
+            <strong>Technologie:</strong> Vanilla JavaScript, HTML5, CSS3<br>
+            <strong>Datum:</strong> 2025
+        </div>
+
+        <hr>
+
+        <!-- MODEL SECTION -->
+        <h2>🧠 Model (hogerlager.js)</h2>
+        
+        <div class="file-info">
+            <strong>Bestand:</strong> js/hogerlager.js<br>
+            <strong>Object:</strong> HogerLagerGame (global object)<br>
+            <strong>Verantwoordelijkheid:</strong> Bevat alle game state en logica. Interageert NIET met de DOM.
+        </div>
+
+        <h3>Variabelen</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Variabele</th>
+                    <th>Type</th>
+                    <th>Omschrijving</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>saldo</code></td>
+                    <td>number</td>
+                    <td>Huidige speler saldo/credits. Startwaarde: 100</td>
+                </tr>
+                <tr>
+                    <td><code>lastBet</code></td>
+                    <td>number</td>
+                    <td>Laatste inzet bedrag dat de speler heeft ingezet. Startwaarde: 10</td>
+                </tr>
+                <tr>
+                    <td><code>lastPrediction</code></td>
+                    <td>string</td>
+                    <td>Laatste voorspelling van de speler. Waarden: 'hoger' of 'lager'. Startwaarde: 'hoger'</td>
+                </tr>
+                <tr>
+                    <td><code>roundNumber</code></td>
+                    <td>number</td>
+                    <td>Huidige ronde nummer. Wordt verhoogd wanneer een ronde wordt voltooid. Startwaarde: 0</td>
+                </tr>
+                <tr>
+                    <td><code>computerDice</code></td>
+                    <td>Array&lt;number&gt;</td>
+                    <td>Array met twee dobbelsteen waarden van de computer [die1, die2]. Startwaarde: [0, 0]</td>
+                </tr>
+                <tr>
+                    <td><code>playerDice</code></td>
+                    <td>Array&lt;number&gt;</td>
+                    <td>Array met twee dobbelsteen waarden van de speler [die1, die2]. Startwaarde: [0, 0]</td>
+                </tr>
+                <tr>
+                    <td><code>computerTotal</code></td>
+                    <td>number</td>
+                    <td>Som van de computer dobbelstenen. Startwaarde: 0</td>
+                </tr>
+                <tr>
+                    <td><code>playerTotal</code></td>
+                    <td>number</td>
+                    <td>Som van de speler dobbelstenen. Startwaarde: 0</td>
+                </tr>
+                <tr>
+                    <td><code>history</code></td>
+                    <td>Array&lt;Object&gt;</td>
+                    <td>Array met geschiedenis objecten van voltooide rondes. Maximaal 5 entries, nieuwste eerst. Startwaarde: []</td>
+                </tr>
+                <tr>
+                    <td><code>computerHasRolled</code></td>
+                    <td>boolean</td>
+                    <td>Flag die aangeeft of de computer deze ronde heeft gegooid. Startwaarde: false</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h3>Functies</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Functie</th>
+                    <th>Parameters</th>
+                    <th>Return Type</th>
+                    <th>Omschrijving</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>rollTwoDice()</code></td>
+                    <td>geen</td>
+                    <td>Array&lt;number&gt;</td>
+                    <td>Gooit twee dobbelstenen en retourneert een array met twee willekeurige waarden tussen 1 en 6 [die1, die2]</td>
+                </tr>
+                <tr>
+                    <td><code>startNewRoundWithComputerRoll()</code></td>
+                    <td>geen</td>
+                    <td>Object</td>
+                    <td>Start een nieuwe ronde door computer dobbelstenen te gooien. Reset speler dobbelstenen naar [0,0]. Zet computerHasRolled op true. Retourneert object met computerDice en computerTotal</td>
+                </tr>
+                <tr>
+                    <td><code>setBetAndPrediction(betAmount, prediction)</code></td>
+                    <td>betAmount: number, prediction: string</td>
+                    <td>Object</td>
+                    <td>Valideert en slaat inzet en voorspelling op. Controleert of betAmount een geldig nummer is, tussen 1 en saldo. Controleert of prediction 'hoger' of 'lager' is. Retourneert {success: boolean, error?: string}</td>
+                </tr>
+                <tr>
+                    <td><code>rollPlayerAndResolve()</code></td>
+                    <td>geen</td>
+                    <td>Object</td>
+                    <td>Gooit speler dobbelstenen en lost de ronde op. Verhoogt roundNumber. Bepaalt win/verlies op basis van voorspelling. Update saldo (+inzet bij win, -inzet bij verlies). Voegt entry toe aan history (max 5). Retourneert compleet outcome object</td>
+                </tr>
+                <tr>
+                    <td><code>resetGame()</code></td>
+                    <td>geen</td>
+                    <td>void</td>
+                    <td>Reset alle game state naar beginwaarden. Zet saldo op 100, roundNumber op 0, alle dobbelstenen op [0,0], history op [], computerHasRolled op false</td>
+                </tr>
+                <tr>
+                    <td><code>isGameOver()</code></td>
+                    <td>geen</td>
+                    <td>boolean</td>
+                    <td>Controleert of het spel voorbij is (saldo <= 0). Retourneert true als saldo 0 of minder is</td>
+                </tr>
+                <tr>
+                    <td><code>hasComputerRolled()</code></td>
+                    <td>geen</td>
+                    <td>boolean</td>
+                    <td>Controleert of de computer deze ronde heeft gegooid. Retourneert waarde van computerHasRolled flag</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h3>UML Diagram - Model</h3>
+        <div class="uml-section">
+            <div class="uml-code">HogerLagerGame
++saldo: number
++lastBet: number
++lastPrediction: string
++roundNumber: number
++computerDice: Array&lt;number&gt;
++playerDice: Array&lt;number&gt;
++computerTotal: number
++playerTotal: number
++history: Array&lt;Object&gt;
++computerHasRolled: boolean
+
++rollTwoDice(): Array&lt;number&gt;
++startNewRoundWithComputerRoll(): Object
++setBetAndPrediction(betAmount: number, prediction: string): Object
++rollPlayerAndResolve(): Object
++resetGame(): void
++isGameOver(): boolean
++hasComputerRolled(): boolean</div>
+        </div>
+
+        <hr>
+
+        <!-- VIEW SECTION -->
+        <h2>🖥 View (index.html + CSS)</h2>
+        
+        <div class="file-info">
+            <strong>Bestanden:</strong> index.html, css/style.css<br>
+            <strong>Verantwoordelijkheid:</strong> Definieert de HTML structuur en CSS styling. Bevat geen JavaScript logica.
+        </div>
+
+        <h3>HTML Elementen (Variabelen)</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Element ID</th>
+                    <th>Type</th>
+                    <th>Omschrijving</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>computer-die-1</code></td>
+                    <td>HTMLDivElement</td>
+                    <td>Eerste dobbelsteen display box voor computer</td>
+                </tr>
+                <tr>
+                    <td><code>computer-die-2</code></td>
+                    <td>HTMLDivElement</td>
+                    <td>Tweede dobbelsteen display box voor computer</td>
+                </tr>
+                <tr>
+                    <td><code>computer-total</code></td>
+                    <td>HTMLSpanElement</td>
+                    <td>Display voor computer totaal som</td>
+                </tr>
+                <tr>
+                    <td><code>player-die-1</code></td>
+                    <td>HTMLDivElement</td>
+                    <td>Eerste dobbelsteen display box voor speler</td>
+                </tr>
+                <tr>
+                    <td><code>player-die-2</code></td>
+                    <td>HTMLDivElement</td>
+                    <td>Tweede dobbelsteen display box voor speler</td>
+                </tr>
+                <tr>
+                    <td><code>player-total</code></td>
+                    <td>HTMLSpanElement</td>
+                    <td>Display voor speler totaal som</td>
+                </tr>
+                <tr>
+                    <td><code>saldo-waarde</code></td>
+                    <td>HTMLSpanElement</td>
+                    <td>Display voor huidige saldo waarde</td>
+                </tr>
+                <tr>
+                    <td><code>radio-hoger</code></td>
+                    <td>HTMLInputElement</td>
+                    <td>Radio button voor "Hoger" voorspelling</td>
+                </tr>
+                <tr>
+                    <td><code>radio-lager</code></td>
+                    <td>HTMLInputElement</td>
+                    <td>Radio button voor "Lager" voorspelling</td>
+                </tr>
+                <tr>
+                    <td><code>inzet</code></td>
+                    <td>HTMLInputElement</td>
+                    <td>Number input voor inzet bedrag</td>
+                </tr>
+                <tr>
+                    <td><code>inzet-error</code></td>
+                    <td>HTMLParagraphElement</td>
+                    <td>Error message display onder inzet input</td>
+                </tr>
+                <tr>
+                    <td><code>game-over-message</code></td>
+                    <td>HTMLParagraphElement</td>
+                    <td>Game over bericht display</td>
+                </tr>
+                <tr>
+                    <td><code>result-message</code></td>
+                    <td>HTMLDivElement</td>
+                    <td>Container voor resultaat bericht (win/loss)</td>
+                </tr>
+                <tr>
+                    <td><code>history-body</code></td>
+                    <td>HTMLTableSectionElement</td>
+                    <td>tbody element voor geschiedenis tabel</td>
+                </tr>
+                <tr>
+                    <td><code>history-empty</code></td>
+                    <td>HTMLParagraphElement</td>
+                    <td>Bericht wanneer er geen geschiedenis is</td>
+                </tr>
+                <tr>
+                    <td><code>history-count</code></td>
+                    <td>HTMLSpanElement</td>
+                    <td>Display voor aantal gespeelde rondes</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h3>Buttons (Event Targets)</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Button ID</th>
+                    <th>Type</th>
+                    <th>Omschrijving</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>btn-computer</code></td>
+                    <td>HTMLButtonElement</td>
+                    <td>Button om computer dobbelstenen te gooien</td>
+                </tr>
+                <tr>
+                    <td><code>btn-speler</code></td>
+                    <td>HTMLButtonElement</td>
+                    <td>Button om speler dobbelstenen te gooien</td>
+                </tr>
+                <tr>
+                    <td><code>btn-nieuw-spel</code></td>
+                    <td>HTMLButtonElement</td>
+                    <td>Button om een nieuw spel te starten na game over</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h3>CSS Classes (Styling)</h3>
+        <div class="note">
+            <strong>Belangrijk:</strong> CSS classes worden gebruikt voor styling maar bevatten geen logica. Belangrijke classes: 
+            <code>.dice-box</code>, <code>.rolled</code> (animatie), <code>.result-message--win</code>, <code>.result-message--lose</code>, 
+            <code>.result-win</code>, <code>.result-lose</code>, <code>.mono</code> (monospace font)
+        </div>
+
+        <h3>UML Diagram - View</h3>
+        <div class="uml-section">
+            <div class="uml-code">View (HTML Structure)
++computer-die-1: HTMLDivElement
++computer-die-2: HTMLDivElement
++computer-total: HTMLSpanElement
++player-die-1: HTMLDivElement
++player-die-2: HTMLDivElement
++player-total: HTMLSpanElement
++saldo-waarde: HTMLSpanElement
++radio-hoger: HTMLInputElement
++radio-lager: HTMLInputElement
++inzet: HTMLInputElement
++inzet-error: HTMLParagraphElement
++game-over-message: HTMLParagraphElement
++result-message: HTMLDivElement
++history-body: HTMLTableSectionElement
++history-empty: HTMLParagraphElement
++history-count: HTMLSpanElement
++btn-computer: HTMLButtonElement
++btn-speler: HTMLButtonElement
++btn-nieuw-spel: HTMLButtonElement</div>
+        </div>
+
+        <hr>
+
+        <!-- CONTROLLER SECTION -->
+        <h2>🎮 Controller (controller.js)</h2>
+        
+        <div class="file-info">
+            <strong>Bestand:</strong> js/controller.js<br>
+            <strong>Verantwoordelijkheid:</strong> Handelt alle DOM interacties en event handling af. Communiceert met HogerLagerGame model om game state te krijgen/zetten.
+        </div>
+
+        <h3>DOM Element Referenties (Variabelen)</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Variabele</th>
+                    <th>Type</th>
+                    <th>Omschrijving</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>computerDie1</code></td>
+                    <td>HTMLElement</td>
+                    <td>Gecachte referentie naar #computer-die-1</td>
+                </tr>
+                <tr>
+                    <td><code>computerDie2</code></td>
+                    <td>HTMLElement</td>
+                    <td>Gecachte referentie naar #computer-die-2</td>
+                </tr>
+                <tr>
+                    <td><code>computerTotal</code></td>
+                    <td>HTMLElement</td>
+                    <td>Gecachte referentie naar #computer-total</td>
+                </tr>
+                <tr>
+                    <td><code>btnComputer</code></td>
+                    <td>HTMLElement</td>
+                    <td>Gecachte referentie naar #btn-computer</td>
+                </tr>
+                <tr>
+                    <td><code>playerDie1</code></td>
+                    <td>HTMLElement</td>
+                    <td>Gecachte referentie naar #player-die-1</td>
+                </tr>
+                <tr>
+                    <td><code>playerDie2</code></td>
+                    <td>HTMLElement</td>
+                    <td>Gecachte referentie naar #player-die-2</td>
+                </tr>
+                <tr>
+                    <td><code>playerTotal</code></td>
+                    <td>HTMLElement</td>
+                    <td>Gecachte referentie naar #player-total</td>
+                </tr>
+                <tr>
+                    <td><code>btnSpeler</code></td>
+                    <td>HTMLElement</td>
+                    <td>Gecachte referentie naar #btn-speler</td>
+                </tr>
+                <tr>
+                    <td><code>saldoWaarde</code></td>
+                    <td>HTMLElement</td>
+                    <td>Gecachte referentie naar #saldo-waarde</td>
+                </tr>
+                <tr>
+                    <td><code>radioHoger</code></td>
+                    <td>HTMLElement</td>
+                    <td>Gecachte referentie naar #radio-hoger</td>
+                </tr>
+                <tr>
+                    <td><code>radioLager</code></td>
+                    <td>HTMLElement</td>
+                    <td>Gecachte referentie naar #radio-lager</td>
+                </tr>
+                <tr>
+                    <td><code>inzetInput</code></td>
+                    <td>HTMLElement</td>
+                    <td>Gecachte referentie naar #inzet</td>
+                </tr>
+                <tr>
+                    <td><code>inzetError</code></td>
+                    <td>HTMLElement</td>
+                    <td>Gecachte referentie naar #inzet-error</td>
+                </tr>
+                <tr>
+                    <td><code>gameOverMessage</code></td>
+                    <td>HTMLElement</td>
+                    <td>Gecachte referentie naar #game-over-message</td>
+                </tr>
+                <tr>
+                    <td><code>btnNieuwSpel</code></td>
+                    <td>HTMLElement</td>
+                    <td>Gecachte referentie naar #btn-nieuw-spel</td>
+                </tr>
+                <tr>
+                    <td><code>resultMessage</code></td>
+                    <td>HTMLElement</td>
+                    <td>Gecachte referentie naar #result-message</td>
+                </tr>
+                <tr>
+                    <td><code>historyBody</code></td>
+                    <td>HTMLElement</td>
+                    <td>Gecachte referentie naar #history-body</td>
+                </tr>
+                <tr>
+                    <td><code>historyEmpty</code></td>
+                    <td>HTMLElement</td>
+                    <td>Gecachte referentie naar #history-empty</td>
+                </tr>
+                <tr>
+                    <td><code>historyCount</code></td>
+                    <td>HTMLElement</td>
+                    <td>Gecachte referentie naar #history-count</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h3>Render Functies</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Functie</th>
+                    <th>Parameters</th>
+                    <th>Return Type</th>
+                    <th>Omschrijving</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>renderComputerState(data)</code></td>
+                    <td>data: Object</td>
+                    <td>void</td>
+                    <td>Rendert computer dobbelstenen waarden en totaal. Voegt 'rolled' class toe voor animatie effect</td>
+                </tr>
+                <tr>
+                    <td><code>renderPlayerState(data)</code></td>
+                    <td>data: Object</td>
+                    <td>void</td>
+                    <td>Rendert speler dobbelstenen waarden en totaal. Voegt 'rolled' class toe voor animatie effect</td>
+                </tr>
+                <tr>
+                    <td><code>clearPlayerDice()</code></td>
+                    <td>geen</td>
+                    <td>void</td>
+                    <td>Wist speler dobbelstenen display naar initiële staat ('–') en verwijdert animatie class</td>
+                </tr>
+                <tr>
+                    <td><code>clearAllDice()</code></td>
+                    <td>geen</td>
+                    <td>void</td>
+                    <td>Wist alle dobbelstenen displays (computer en speler) naar initiële staat</td>
+                </tr>
+                <tr>
+                    <td><code>renderSaldo(newSaldo)</code></td>
+                    <td>newSaldo: number</td>
+                    <td>void</td>
+                    <td>Update saldo display met nieuwe waarde</td>
+                </tr>
+                <tr>
+                    <td><code>renderResultMessage(outcome)</code></td>
+                    <td>outcome: Object</td>
+                    <td>void</td>
+                    <td>Rendert resultaat bericht na ronde resolutie. Toont groen bericht voor win, rood voor loss</td>
+                </tr>
+                <tr>
+                    <td><code>clearResultMessage()</code></td>
+                    <td>geen</td>
+                    <td>void</td>
+                    <td>Wist resultaat bericht area volledig. Verwijdert alle child elements en content</td>
+                </tr>
+                <tr>
+                    <td><code>renderHistory(historyArray)</code></td>
+                    <td>historyArray: Array</td>
+                    <td>void</td>
+                    <td>Rendert geschiedenis tabel met laatste rondes. Toont nieuwste rondes bovenaan. Update history count</td>
+                </tr>
+                <tr>
+                    <td><code>showBetError(message)</code></td>
+                    <td>message: string</td>
+                    <td>void</td>
+                    <td>Toont error bericht onder inzet input met rode border</td>
+                </tr>
+                <tr>
+                    <td><code>clearBetError()</code></td>
+                    <td>geen</td>
+                    <td>void</td>
+                    <td>Wist error bericht onder inzet input</td>
+                </tr>
+                <tr>
+                    <td><code>showGameOverMessage()</code></td>
+                    <td>geen</td>
+                    <td>void</td>
+                    <td>Toont game over bericht en "Nieuw spel" button</td>
+                </tr>
+                <tr>
+                    <td><code>clearGameOverMessage()</code></td>
+                    <td>geen</td>
+                    <td>void</td>
+                    <td>Verbergt game over bericht en "Nieuw spel" button</td>
+                </tr>
+                <tr>
+                    <td><code>setButtonsForNewRound()</code></td>
+                    <td>geen</td>
+                    <td>void</td>
+                    <td>Zet button states voor nieuwe ronde. Computer button enabled, Speler button disabled. Disable inputs als game over</td>
+                </tr>
+                <tr>
+                    <td><code>setButtonsAfterComputerRoll()</code></td>
+                    <td>geen</td>
+                    <td>void</td>
+                    <td>Zet button states na computer roll. Beide buttons enabled</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h3>Event Handler Functies</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Functie</th>
+                    <th>Parameters</th>
+                    <th>Return Type</th>
+                    <th>Omschrijving</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>handleComputerRoll()</code></td>
+                    <td>geen</td>
+                    <td>void</td>
+                    <td>Handelt "Computer gooien" button click af. Wist berichten. Start nieuwe ronde via model. Rendert computer state. Enable speler button</td>
+                </tr>
+                <tr>
+                    <td><code>handlePlayerRoll()</code></td>
+                    <td>geen</td>
+                    <td>void</td>
+                    <td>Handelt "Speler gooien" button click af. Valideert inzet en voorspelling. Roept model aan om speler te gooien en ronde op te lossen. Update UI met resultaten. Check game over</td>
+                </tr>
+                <tr>
+                    <td><code>handleNewGame()</code></td>
+                    <td>geen</td>
+                    <td>void</td>
+                    <td>Handelt "Nieuw spel" button click af. Reset model. Wist alle UI elementen. Reset naar beginwaarden. Enable buttons</td>
+                </tr>
+                <tr>
+                    <td><code>initializeUI()</code></td>
+                    <td>geen</td>
+                    <td>void</td>
+                    <td>Initialiseert UI naar default state bij page load. Zet initiële displays, default waarden, wist berichten, zet button states</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h3>UML Diagram - Controller</h3>
+        <div class="uml-section">
+            <div class="uml-code">Controller (controller.js)
++computerDie1: HTMLElement
++computerDie2: HTMLElement
++computerTotal: HTMLElement
++btnComputer: HTMLElement
++playerDie1: HTMLElement
++playerDie2: HTMLElement
++playerTotal: HTMLElement
++btnSpeler: HTMLElement
++saldoWaarde: HTMLElement
++radioHoger: HTMLElement
++radioLager: HTMLElement
++inzetInput: HTMLElement
++inzetError: HTMLElement
++gameOverMessage: HTMLElement
++btnNieuwSpel: HTMLElement
++resultMessage: HTMLElement
++historyBody: HTMLElement
++historyEmpty: HTMLElement
++historyCount: HTMLElement
+
++renderComputerState(data: Object): void
++renderPlayerState(data: Object): void
++clearPlayerDice(): void
++clearAllDice(): void
++renderSaldo(newSaldo: number): void
++renderResultMessage(outcome: Object): void
++clearResultMessage(): void
++renderHistory(historyArray: Array): void
++showBetError(message: string): void
++clearBetError(): void
++showGameOverMessage(): void
++clearGameOverMessage(): void
++setButtonsForNewRound(): void
++setButtonsAfterComputerRoll(): void
++handleComputerRoll(): void
++handlePlayerRoll(): void
++handleNewGame(): void
++initializeUI(): void</div>
+        </div>
+
+        <hr>
+
+        <!-- ARCHITECTURE OVERVIEW -->
+        <h2>📐 Architectuur Overzicht</h2>
+        
+        <div class="note">
+            <strong>MVC Pattern:</strong><br>
+            • <strong>Model (hogerlager.js):</strong> Bevat game state en logica. Geen DOM interactie.<br>
+            • <strong>View (index.html + CSS):</strong> Definieert HTML structuur en styling. Geen logica.<br>
+            • <strong>Controller (controller.js):</strong> Handelt events af, communiceert met model, update view.
+        </div>
+
+        <h3>Data Flow</h3>
+        <div class="code-block">1. User klikt button → Controller event handler
+2. Controller roept Model functie aan
+3. Model update state en retourneert data
+4. Controller ontvangt data
+5. Controller update View (DOM)
+6. User ziet resultaat</div>
+
+        <h3>Game Flow</h3>
+        <div class="code-block">1. Computer gooien → startNewRoundWithComputerRoll()
+2. Speler kiest inzet + voorspelling → setBetAndPrediction()
+3. Speler gooien → rollPlayerAndResolve()
+4. Resultaat wordt getoond → renderResultMessage()
+5. Geschiedenis wordt bijgewerkt → renderHistory()</div>
+
+        <hr>
+
+        <div class="note">
+            <strong>Einde Technisch Ontwerp</strong><br>
+            Dit document beschrijft exact de huidige implementatie van het Hoger / Lager – Dobbelspel project.
+        </div>
+
+    </div>
+</body>
+</html>
+
