@@ -45,6 +45,32 @@ document.addEventListener('DOMContentLoaded', function() {
     const historyCount = document.getElementById('history-count');
 
     // ==========================================
+    // Helper Functions
+    // ==========================================
+
+    /**
+     * Creates the HTML structure for a die face with pips.
+     * @param {number} value - The value of the die (1-6)
+     * @returns {string} HTML string for the die face
+     */
+    function createDieFaceHTML(value) {
+        // Create 9 pips div structure
+        let pipsHTML = '';
+        for (let i = 0; i < 9; i++) {
+            pipsHTML += '<div class="pip"></div>';
+        }
+        return `<div class="die-face" data-value="${value}">${pipsHTML}</div>`;
+    }
+
+    /**
+     * Creates the HTML structure for a placeholder die.
+     * @returns {string} HTML string for the placeholder
+     */
+    function createPlaceholderHTML() {
+        return '<div class="dice-placeholder">?</div>';
+    }
+
+    // ==========================================
     // Render Functions
     // ==========================================
     
@@ -54,21 +80,24 @@ document.addEventListener('DOMContentLoaded', function() {
      * @param {Object} data - Object with computerDice array and computerTotal
      */
     function renderComputerState(data) {
-        // Update dice values
-        computerDie1.textContent = data.computerDice[0];
-        computerDie2.textContent = data.computerDice[1];
+        // Add rolling class first to trigger animation
+        computerDie1.classList.add('rolling');
+        computerDie2.classList.add('rolling');
+
+        // Update content after a small delay to simulate rolling
+        // Or immediately if we want instant feedback, but CSS anim handles the spin
+        
+        // We can change content mid-animation or immediately
+        computerDie1.innerHTML = createDieFaceHTML(data.computerDice[0]);
+        computerDie2.innerHTML = createDieFaceHTML(data.computerDice[1]);
+        
         computerTotal.textContent = data.computerTotal;
         
-        // Trigger roll animation
-        computerDie1.classList.remove('rolled');
-        computerDie2.classList.remove('rolled');
-        
-        // Force reflow to restart animation
-        void computerDie1.offsetWidth;
-        void computerDie2.offsetWidth;
-        
-        computerDie1.classList.add('rolled');
-        computerDie2.classList.add('rolled');
+        // Remove animation class after animation completes (0.6s)
+        setTimeout(() => {
+            computerDie1.classList.remove('rolling');
+            computerDie2.classList.remove('rolling');
+        }, 600);
     }
     
     /**
@@ -77,21 +106,21 @@ document.addEventListener('DOMContentLoaded', function() {
      * @param {Object} data - Object with playerDice array and playerTotal
      */
     function renderPlayerState(data) {
-        // Update dice values
-        playerDie1.textContent = data.playerDice[0];
-        playerDie2.textContent = data.playerDice[1];
+        // Add rolling class
+        playerDie1.classList.add('rolling');
+        playerDie2.classList.add('rolling');
+
+        // Update content
+        playerDie1.innerHTML = createDieFaceHTML(data.playerDice[0]);
+        playerDie2.innerHTML = createDieFaceHTML(data.playerDice[1]);
+        
         playerTotal.textContent = data.playerTotal;
         
-        // Trigger roll animation
-        playerDie1.classList.remove('rolled');
-        playerDie2.classList.remove('rolled');
-        
-        // Force reflow to restart animation
-        void playerDie1.offsetWidth;
-        void playerDie2.offsetWidth;
-        
-        playerDie1.classList.add('rolled');
-        playerDie2.classList.add('rolled');
+        // Remove animation class after animation completes
+        setTimeout(() => {
+            playerDie1.classList.remove('rolling');
+            playerDie2.classList.remove('rolling');
+        }, 600);
     }
     
     /**
@@ -99,11 +128,11 @@ document.addEventListener('DOMContentLoaded', function() {
      * Used when starting a new round.
      */
     function clearPlayerDice() {
-        playerDie1.textContent = '–';
-        playerDie2.textContent = '–';
+        playerDie1.innerHTML = createPlaceholderHTML();
+        playerDie2.innerHTML = createPlaceholderHTML();
         playerTotal.textContent = '0';
-        playerDie1.classList.remove('rolled');
-        playerDie2.classList.remove('rolled');
+        playerDie1.classList.remove('rolling');
+        playerDie2.classList.remove('rolling');
     }
     
     /**
@@ -111,11 +140,11 @@ document.addEventListener('DOMContentLoaded', function() {
      * Used when resetting the game.
      */
     function clearAllDice() {
-        computerDie1.textContent = '–';
-        computerDie2.textContent = '–';
+        computerDie1.innerHTML = createPlaceholderHTML();
+        computerDie2.innerHTML = createPlaceholderHTML();
         computerTotal.textContent = '0';
-        computerDie1.classList.remove('rolled');
-        computerDie2.classList.remove('rolled');
+        computerDie1.classList.remove('rolling');
+        computerDie2.classList.remove('rolling');
         
         clearPlayerDice();
     }
@@ -477,4 +506,3 @@ document.addEventListener('DOMContentLoaded', function() {
     // Log initialization for debugging
     console.log('🎲 Hoger / Lager – Dobbelspel initialized!');
 });
-
